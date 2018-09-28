@@ -9,10 +9,12 @@ class App extends Component {
     super(props);
 
     this.toggle = this.toggle.bind(this);
+    this.onFormSubmit = this.onFormSubmit.bind(this);
     this.state = {
       dropdownOpen: false,
       searchText: '',
-      language: ''
+      language: '',
+      response: ''
     };
   }
 
@@ -20,6 +22,40 @@ class App extends Component {
     this.setState(prevState => ({
       dropdownOpen: !prevState.dropdownOpen
     }));
+  }
+
+  onFormSubmit = (event) => {
+    event.preventDefault();
+    const searchTerm = event.target[0].value;
+    const language = event.target[1].value;
+        
+    const url = 'https://api.github.com/search/repositories?q=' + searchTerm + '+language:' + language + '&sort=stars&order=desc';
+    const twitterUrl = 'https://cors-anywhere.herokuapp.com/https://api.twitter.com/1.1/search/tweets.json?q=nasa&result_type=popular';
+
+    fetch(url)
+    .then(response => response.json())
+    .then((data) => {
+      const reposNames = [];;
+      const total = Math.min(this.props.totalProjects, data.items.length);
+      for (let i = 0; i < total; i++) {
+        reposNames.push(data.items[i].name);
+      }
+      this.setState({
+        response: reposNames.join()
+      });
+      // return fetch(twitterUrl + data.items[0].url), {
+      return fetch(twitterUrl, {
+        method : 'GET',
+        headers : { 
+          'Authorization': 'Bearer ' + process.env.REACT_APP_BEARER_TOKEN
+        }
+      })
+    })
+    .then(response => response.json())
+    .then(data => console.log(data.statuses.length))
+    .catch(function(error) {
+      console.log('Request failed', error)
+    })
   }
 
   render() {
@@ -44,7 +80,7 @@ class App extends Component {
                 />
               </div>
               <Label>Language:</Label>
-              <Input type="select" className = "form-control" type="select" name="select" id="languageSelect"
+              <Input className = "form-control" type="select" name="select" id="languageSelect"
                 onChange={e => this.setState({ language: e.target.value })}>
                 <option>Assembler</option>
                 <option>C</option>
@@ -57,8 +93,7 @@ class App extends Component {
           </Form>
         </Container>
         <div>
-          {this.state.searchText}&nbsp;
-          {this.state.language}
+          { this.state.response };
         </div>  
       </div>
     );
@@ -66,3 +101,7 @@ class App extends Component {
 }
 
 export default App;
+
+App.defaultProps = {
+  totalProjects: 10
+}
