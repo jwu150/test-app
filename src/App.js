@@ -28,37 +28,61 @@ class App extends Component {
     event.preventDefault();
     const searchTerm = event.target[0].value;
     const language = event.target[1].value;
+    const reposNames = [];
         
     const url = 'https://api.github.com/search/repositories?q=' + searchTerm + '+language:' + language + '&sort=stars&order=desc';
-    const twitterUrl = 'https://cors-anywhere.herokuapp.com/https://api.twitter.com/1.1/search/tweets.json?q=nasa&result_type=popular';
+    const twitterUrl = 'https://cors-anywhere.herokuapp.com/https://api.twitter.com/1.1/search/tweets.json?q=';
+    // const total = this.props.totalProjects;
+    let total = this.props.totalProjects;
 
     fetch(url)
     .then(response => response.json())
     .then((data) => {
-      const reposNames = [];;
-      const total = Math.min(this.props.totalProjects, data.items.length);
+      total = Math.min(this.props.totalProjects, data.items.length);
       for (let i = 0; i < total; i++) {
-        reposNames.push(data.items[i].name);
+        reposNames.push(data.items[i].html_url.replace(/(^\w+:|^)\/\//, ''));  //trimmed http://
       }
       this.setState({
         response: reposNames.join()
-      });
-      // return fetch(twitterUrl + data.items[0].url), {
-      return fetch(twitterUrl, {
-        method : 'GET',
-        headers : { 
-          'Authorization': 'Bearer ' + process.env.REACT_APP_BEARER_TOKEN
-        }
       })
     })
-    .then(response => response.json())
-    .then(data => console.log(data.statuses.length))
-    .catch(function(error) {
-      console.log('Request failed', error)
+    .then(() => {
+      for (let i = 0; i < total; i++) {
+        let url = twitterUrl + encodeURI(reposNames[i]);
+        fetch(url, {
+          method : 'GET',
+          headers : { 
+            'Authorization': 'Bearer ' + process.env.REACT_APP_BEARER_TOKEN
+          }
+        })
+        .then(response => response.json())
+        .then(data => { 
+          this.props.statuses[i] = data.statuses;
+          // this.props.statuses[i] = [reposNames[i], ...data.statuses[i]];  //insert repo name at 0 index
+          console.log(this.props.statuses[i].length)
+        })
+        .catch(function(error) {
+          console.log('failed to get twitter projects', error);
+        });
+      }
     })
+    .catch(function(error) {
+      console.log('failed to get github projects', error)
+    });
   }
-
+  
   render() {
+    const feeds = [];
+
+    this.props.statuses.forEach(function(cards, key) {
+      let tCard = [];
+      tCard.push(<p>repo</p>);
+      cards.forEach( function(card, key)  {
+        tCard.push(<li key={ key }>{ card.text }</li>)
+      });
+      feeds.push(tCard);
+    });
+
     return (
       <div className="App">
         <header className="App-header">
@@ -95,6 +119,9 @@ class App extends Component {
         <div>
           { this.state.response };
         </div>  
+        <div>
+          { feeds }
+        </div>  
       </div>
     );
   }
@@ -103,5 +130,6 @@ class App extends Component {
 export default App;
 
 App.defaultProps = {
-  totalProjects: 10
+  totalProjects: 3,
+  statuses: []
 }
