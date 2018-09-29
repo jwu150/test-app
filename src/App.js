@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { fetchTweets } from './tweetActions';
 import { Row, Col } from 'reactstrap';
 import { Button, Container, Form, FormGroup, Input, Label } from 'reactstrap';
 // import logo from './logo.svg';
@@ -8,80 +10,37 @@ class App extends Component {
   constructor(props) {
     super(props);
 
-    this.toggle = this.toggle.bind(this);
     this.onFormSubmit = this.onFormSubmit.bind(this);
-    this.state = {
-      dropdownOpen: false,
-      searchText: '',
-      language: '',
-      response: ''
-    };
-  }
-
-  toggle() {
-    this.setState(prevState => ({
-      dropdownOpen: !prevState.dropdownOpen
-    }));
+    this.tweets = [];
   }
 
   onFormSubmit = (event) => {
-    event.preventDefault();
-    const searchTerm = event.target[0].value;
-    const language = event.target[1].value;
-    const reposNames = [];
-        
-    const url = 'https://api.github.com/search/repositories?q=' + searchTerm + '+language:' + language + '&sort=stars&order=desc';
-    const twitterUrl = 'https://cors-anywhere.herokuapp.com/https://api.twitter.com/1.1/search/tweets.json?q=';
-    // const total = this.props.totalProjects;
-    let total = this.props.totalProjects;
-
-    fetch(url)
-    .then(response => response.json())
-    .then((data) => {
-      total = Math.min(this.props.totalProjects, data.items.length);
-      for (let i = 0; i < total; i++) {
-        reposNames.push(data.items[i].html_url.replace(/(^\w+:|^)\/\//, ''));  //trimmed http://
-      }
-      this.setState({
-        response: reposNames.join()
-      })
-    })
-    .then(() => {
-      for (let i = 0; i < total; i++) {
-        let url = twitterUrl + encodeURI(reposNames[i]);
-        fetch(url, {
-          method : 'GET',
-          headers : { 
-            'Authorization': 'Bearer ' + process.env.REACT_APP_BEARER_TOKEN
-          }
-        })
-        .then(response => response.json())
-        .then(data => { 
-          this.props.statuses[i] = data.statuses;
-          // this.props.statuses[i] = [reposNames[i], ...data.statuses[i]];  //insert repo name at 0 index
-          console.log(this.props.statuses[i].length)
-        })
-        .catch(function(error) {
-          console.log('failed to get twitter projects', error);
-        });
-      }
-    })
-    .catch(function(error) {
-      console.log('failed to get github projects', error)
-    });
+    event.preventDefault();  //prevent form submit, could use a regular button but this way we get Enter key for free
+    this.props.dispatch(fetchTweets(event.target[0].value, event.target[1].value, this.props.totalProjects));
   }
   
   render() {
+    const { error, loading, tweets} = this.props;
     const feeds = [];
 
-    this.props.statuses.forEach(function(cards, key) {
-      let tCard = [];
-      tCard.push(<p>repo</p>);
-      cards.forEach( function(card, key)  {
-        tCard.push(<li key={ key }>{ card.text }</li>)
-      });
-      feeds.push(tCard);
-    });
+    if (error) {
+      feeds.push(<div>Error! {error.message}</div>);
+    } else if (loading) {
+      feeds.push(<div>Loading...</div>);
+    } else {
+      if (tweets.length === 0) {
+        feeds.push(<div>No Results Found</div>);
+      } else {
+        tweets.forEach(function(cards, key) {
+          let tCard = [];
+          tCard.push(<p>repo</p>);
+          cards.forEach( function(card, key)  {
+            tCard.push(<li key={ key }>{ card.text }</li>)
+          });
+          feeds.push(tCard);
+        });
+      }
+    }
 
     return (
       <div className="App">
@@ -99,13 +58,12 @@ class App extends Component {
                   type="text"
                   name="text"
                   placeholder="enter text"
-                  value={this.state.searchText}
-                  onChange={e => this.setState({ searchText: e.target.value })}
+                  // value={this.state.searchText}
+                  // onChange={e => this.setState({ searchText: e.target.value })}
                 />
               </div>
               <Label>Language:</Label>
-              <Input className = "form-control" type="select" name="select" id="languageSelect"
-                onChange={e => this.setState({ language: e.target.value })}>
+              <Input className = "form-control" type="select" name="select" id="languageSelect">
                 <option>Assembler</option>
                 <option>C</option>
                 <option>C++</option>
@@ -117,9 +75,6 @@ class App extends Component {
           </Form>
         </Container>
         <div>
-          { this.state.response };
-        </div>  
-        <div>
           { feeds }
         </div>  
       </div>
@@ -127,9 +82,15 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapStateToProps = state => ({
+  tweets: state.items,
+  loading: state.loading,
+  error: state.error
+});
 
 App.defaultProps = {
-  totalProjects: 3,
-  statuses: []
+  totalProjects: 5,
 }
+
+export default connect(mapStateToProps)(App);
+
