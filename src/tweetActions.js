@@ -59,10 +59,12 @@ export function fetchTweets(searchTerm, language, totalProjects) {
             return data;
         });
       })).then((values) => {
-          let tweets = values.map(res => res.statuses);
-          console.log(tweets);
-          dispatch(fetchTweetsSuccess(tweets));
-          return tweets;
+          // let tweets = values.map(res => { 
+          //   res.statuses
+          // });
+          // console.log(tweets);
+          dispatch(fetchTweetsSuccess(values));
+          return values;
         });
     })
     .catch(function(error) {
@@ -72,7 +74,7 @@ export function fetchTweets(searchTerm, language, totalProjects) {
   };
 }
 
-// Handle HTTP errors since fetch won't.
+// TODO: Handle HTTP errors since fetch won't.
 function handleErrors(response) {
   if (!response.ok) {
     throw Error(response.statusText);

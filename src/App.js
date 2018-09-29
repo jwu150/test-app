@@ -5,6 +5,7 @@ import { Row, Col } from 'reactstrap';
 import { Button, Container, Form, FormGroup, Input, Label } from 'reactstrap';
 // import logo from './logo.svg';
 import './App.css';
+import Cards from './Cards';
 
 class App extends Component {
   constructor(props) {
@@ -27,19 +28,8 @@ class App extends Component {
       feeds.push(<div>Error! {error.message}</div>);
     } else if (loading) {
       feeds.push(<div>Loading...</div>);
-    } else {
-      if (tweets.length === 0) {
-        feeds.push(<div>No Results Found</div>);
-      } else {
-        tweets.forEach(function(cards, key) {
-          let tCard = [];
-          tCard.push(<p>repo</p>);
-          cards.forEach( function(card, key)  {
-            tCard.push(<li key={ key }>{ card.text }</li>)
-          });
-          feeds.push(tCard);
-        });
-      }
+    } else if (tweets.length === 0) {
+      feeds.push(<div>No Results Found</div>);
     }
 
     return (
@@ -76,6 +66,7 @@ class App extends Component {
         </Container>
         <div>
           { feeds }
+          <Cards tweets={ tweets } />
         </div>  
       </div>
     );
