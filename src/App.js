@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { fetchTweets } from './tweetActions';
-// import { Row, Col } from 'reactstrap';
-import { Button, Container, Form, FormGroup, Input, Label } from 'reactstrap';
-// import logo from './logo.svg';
+import { Button, Container, Col, Form, FormGroup, Input, Label, Row } from 'reactstrap';
 import { Table } from './Table';
 import './App.css';
 
@@ -22,26 +21,29 @@ class App extends Component {
   
   render() {
     const { error, loading, tweets} = this.props;
-    const status = [];
+    const results = [];
 
     if (error) {
-      status.push(<div key="error">Error! { error.message }</div>);
+      results.push(<div key="error">Error! { error.message }</div>);
     } else if (loading) {
-      status.push(<div key="loading">loading...</div>);
+      results.push(<div key="loading">loading...</div>);
     } else if (tweets.length === 0) {
-      status.push(<div key="no-records">No Results Found</div>);
+      results.push(<div key="no-records">No Results Found</div>);
+    } else {
+      results.push(<Table tweets={ tweets } />);
     }
 
     return (
       <div className="App">
         <header className="App-header">
           {/* <img src={logo} className="App-logo" alt="logo" /> */}
-          <h1 className="App-title">React Test Application</h1>
+          <h1 className="App-title">GitHub Tweets</h1>
         </header>
         <Container className="Content">
           <Form onSubmit={this.onFormSubmit}>
-            <FormGroup>
-              <div className="form-group">
+          <Row form>
+            <Col md={6}>
+              <FormGroup>
                 <Label>Search Terms:</Label>
                 <Input
                   className = "form-control"
@@ -49,22 +51,26 @@ class App extends Component {
                   name="text"
                   placeholder="enter text"
                 />
-              </div>
-              <Label>Language:</Label>
-              <Input className = "form-control" type="select" name="select" id="languageSelect">
-                <option>Assembler</option>
-                <option>C</option>
-                <option>C++</option>
-                <option>Java</option>
-                <option>JavaScript</option>
-              </Input>
-            </FormGroup>
+                </FormGroup>
+              </Col>
+              <Col md={6}>
+                <FormGroup>
+                  <Label>Language:</Label>
+                  <Input className = "form-control" type="select" name="select" id="languageSelect">
+                    <option value="assembler">Assembler</option>
+                    <option value="c">C</option>
+                    <option value="c++">C++</option>
+                    <option value="java">Java</option>
+                    <option value="javascript">JavaScript</option>
+                  </Input>
+                </FormGroup>
+              </Col>
+            </Row>
             <Button type="submit" color="primary">Submit</Button>
           </Form>
         </Container>
-        <div>
-          { status }
-          <Table tweets={ tweets } />
+        <div className="Results">
+          { results }
         </div>  
       </div>
     );
@@ -78,8 +84,12 @@ const mapStateToProps = state => ({
 });
 
 App.defaultProps = {
-  totalProjects: 5,
+  totalProjects: 10,
 }
+
+App.propTypes = {
+  totalProjects: PropTypes.number
+};
 
 export default connect(mapStateToProps)(App);
 
