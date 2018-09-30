@@ -15,8 +15,14 @@ export class RepoTweets extends React.Component {
     const { tweets } = this.props;
     const rows = [];
     tweets.forEach( (status, key) => {
-      rows.push(<li className="tweet-card" key= { key }>{ status.text }</li>);
-    })
+      rows.push(
+        <li className="tweet-card">
+          <div className="tweet-card__title"><span>{ status.user.name }</span>&nbsp;<span>@{ status.user.screen_name }</span></div>
+          <div className="tweet-card__text">{ status.text }</div>
+          <div> </div>
+        </li>
+      )
+    });
     return (
       <ul>
         { rows }
