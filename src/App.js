@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { fetchTweets } from './tweetActions';
-import { Row, Col } from 'reactstrap';
+// import { Row, Col } from 'reactstrap';
 import { Button, Container, Form, FormGroup, Input, Label } from 'reactstrap';
 // import logo from './logo.svg';
+import { Table } from './Table';
 import './App.css';
-import Cards from './Cards';
 
 class App extends Component {
   constructor(props) {
@@ -22,14 +22,14 @@ class App extends Component {
   
   render() {
     const { error, loading, tweets} = this.props;
-    const feeds = [];
+    const status = [];
 
     if (error) {
-      feeds.push(<div>Error! {error.message}</div>);
+      status.push(<div key="error">Error! { error.message }</div>);
     } else if (loading) {
-      feeds.push(<div>Loading...</div>);
+      status.push(<div key="loading">loading...</div>);
     } else if (tweets.length === 0) {
-      feeds.push(<div>No Results Found</div>);
+      status.push(<div key="no-records">No Results Found</div>);
     }
 
     return (
@@ -48,8 +48,6 @@ class App extends Component {
                   type="text"
                   name="text"
                   placeholder="enter text"
-                  // value={this.state.searchText}
-                  // onChange={e => this.setState({ searchText: e.target.value })}
                 />
               </div>
               <Label>Language:</Label>
@@ -65,8 +63,8 @@ class App extends Component {
           </Form>
         </Container>
         <div>
-          { feeds }
-          <Cards tweets={ tweets } />
+          { status }
+          <Table tweets={ tweets } />
         </div>  
       </div>
     );

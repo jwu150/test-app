@@ -17,8 +17,6 @@ export const fetchTweetsError = error => ({
 });
 
 export function fetchTweets(searchTerm, language, totalProjects) {
-  const fetches = [];
-
   return dispatch => {
     dispatch(fetchTweetsBegin());
     const url = 'https://api.github.com/search/repositories?q=' + searchTerm + '+language:' + language + '&sort=stars&order=desc';
@@ -51,7 +49,6 @@ export function fetchTweets(searchTerm, language, totalProjects) {
         return request;
       });
 
-      const res=[];
       Promise.all(fetches.map((request) => {
         return fetch(request).then((response) => {
             return response.json();
@@ -59,10 +56,6 @@ export function fetchTweets(searchTerm, language, totalProjects) {
             return data;
         });
       })).then((values) => {
-          // let tweets = values.map(res => { 
-          //   res.statuses
-          // });
-          // console.log(tweets);
           dispatch(fetchTweetsSuccess(values));
           return values;
         });
@@ -75,9 +68,9 @@ export function fetchTweets(searchTerm, language, totalProjects) {
 }
 
 // TODO: Handle HTTP errors since fetch won't.
-function handleErrors(response) {
-  if (!response.ok) {
-    throw Error(response.statusText);
-  }
-  return response;
-}
+// function handleErrors(response) {
+//   if (!response.ok) {
+//     throw Error(response.statusText);
+//   }
+//   return response;
+// }
