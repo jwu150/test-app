@@ -1,13 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './index.css';
+import { createStore, applyMiddleware } from 'redux';
+import { Provider } from 'react-redux';
 import tweetReducer from './tweetReducer'
 import App from './App';
-import registerServiceWorker from './registerServiceWorker';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './index.css';
 
 const store = createStore(
   tweetReducer,
@@ -19,4 +18,3 @@ ReactDOM.render(
     <App />
   </Provider>,
   document.getElementById('root'));
-registerServiceWorker();
