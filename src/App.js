@@ -13,9 +13,14 @@ class App extends Component {
     this.onFormSubmit = this.onFormSubmit.bind(this);
     // this.tweets = [];
   }
-
+  
+  /**
+   * Submit form, using a form we get Enter key for free, but need to prevent event bubble
+   *
+   * @param {event} event - button event for the form
+   */
   onFormSubmit = (event) => {
-    event.preventDefault();  //prevent form submit, could use a regular button but this way we get Enter key for free
+    event.preventDefault();  
     const searchTerm = event.target[0].value.toLowerCase();
     const language = event.target[1].value;
     this.props.dispatch(fetchTweets(searchTerm, language, this.props.totalProjects));
@@ -86,9 +91,14 @@ const mapStateToProps = state => ({
 });
 
 App.defaultProps = {
-  totalProjects: 5,
+  totalProjects: 10,
 }
 
+/**
+ * proptypes that are unique to toggle buttons
+ *
+ * @property {number} [totalProjects] - number of repository projects to fetch  using twitter API
+ */
 App.propTypes = {
   totalProjects: PropTypes.number
 };

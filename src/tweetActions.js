@@ -16,10 +16,19 @@ export const fetchTweetsError = error => ({
   payload: { error }
 });
 
+
+/**
+ * Retrieve tweets using sequential Fetch (first github projects, then tweets of each project)
+ *
+ * @param {string} searchTerm - search term to look for particular github projects (i.e., framework)
+ * @param {string} language - language interested (i.e., C, Java, JavaScript)
+ * @param {string} totalProjects - total number of projects to fetch tweets 
+ * @public
+ */
 export function fetchTweets(searchTerm, language, totalProjects) {
   return dispatch => {
     dispatch(fetchTweetsBegin());
-    
+
     const proxyUrl = 'https://cors-anywhere.herokuapp.com/';  // need proxy server seems like twitter api is not CORS enabled
     const url = 'https://api.github.com/search/repositories?q=' + searchTerm + '+language:' + language + '&sort=stars&order=desc';
     const twitterUrl = proxyUrl + 'https://api.twitter.com/1.1/search/tweets.json?q=';

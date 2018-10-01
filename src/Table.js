@@ -1,5 +1,10 @@
 import React from 'react';
 
+
+/**
+ * Repository Title, it is styled with a sticky header so that it will stick when its child elements (tweets) are scrolling
+ *
+ */
 export class RepoTitle extends React.Component {
   render() {
     const { title } = this.props;
@@ -9,6 +14,10 @@ export class RepoTitle extends React.Component {
   }
 }
 
+/**
+ * Tweet Card render as a ul, responsive in most browsers when it is displayed in inline-block
+ *
+ */
 export class RepoStatuses extends React.Component {
   render() {
     const { statuses } = this.props;
@@ -30,6 +39,10 @@ export class RepoStatuses extends React.Component {
   }
 }
 
+/**
+ * Tweet container, holds all the tweets assoicated with a particular repository
+ *
+ */
 export class Table extends React.Component {
   render() {
     const { tweets } = this.props;
