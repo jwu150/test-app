@@ -64,9 +64,13 @@ export function fetchTweets(searchTerm, language, totalProjects) {
 
       Promise.all(fetches.map((request) => {
         return fetch(request).then((response) => {
-            return response.json();
+          if (response.status === 401) {
+            console.log('failed to fetch tweets.');
+            return;
+          }
+          return response.json();
         }).then((data) => {
-            return data;
+          return data;
         });
       })).then((tweets) => {
           // Even starred or popular projects might not have recent tweets
