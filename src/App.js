@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import cors_proxy from 'cors-anywhere';
 import { connect } from 'react-redux';
 import { fetchTweets } from './tweetActions';
 import { Button, Container, Col, Form, FormGroup, Input, Label, Row } from 'reactstrap';
@@ -11,7 +12,19 @@ class App extends Component {
     super(props);
 
     this.onFormSubmit = this.onFormSubmit.bind(this);
-    // this.tweets = [];
+    // // Listen on a specific host via the HOST environment variable
+    // var host = process.env.HOST || '0.0.0.0';
+    // // Listen on a specific port via the PORT environment variable
+    // var port = process.env.PORT || 8081;
+    
+    // var cors_proxy = require('cors-anywhere');
+    // cors_proxy.createServer({
+    //     originWhitelist: [], // Allow all origins
+    //     requireHeader: ['origin', 'x-requested-with'],
+    //     removeHeaders: ['cookie', 'cookie2']
+    // }).listen(port, host, function() {
+    //     console.log('Running CORS Anywhere on ' + host + ':' + port);
+    // });  
   }
   
   /**
