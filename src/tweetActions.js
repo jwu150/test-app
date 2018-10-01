@@ -28,15 +28,20 @@ export function fetchTweets(searchTerm, language, totalProjects) {
   return dispatch => {
     dispatch(fetchTweetsBegin());
 
-    // const proxyUrl = 'https://cors-anywhere.herokuapp.com/';  // need proxy server seems like twitter api is not CORS enabled
-    const proxyUrl = 'http://localhost:8080/';  // need proxy server seems like twitter api is not CORS enabled
+    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';  // need proxy server seems like twitter api is not CORS enabled
+    // const proxyUrl = 'http://localhost:8080/';  // need proxy server seems like twitter api is not CORS enabled
     const url = 'https://api.github.com/search/repositories?q=' + searchTerm + '+language:' + language + '&sort=stars&order=desc';
     const twitterUrl = proxyUrl + 'https://api.twitter.com/1.1/search/tweets.json?q=';
     const reposNames = [];
     let total = totalProjects;
 
     return fetch(url)
-    .then(response => response.json())
+    .then(response => {
+      if (!response.ok) {
+        throw Error(response.statusText);
+      }
+      return response.json();
+    })
     .then((data) => {
       // only fetch 10 or less projects, data returned already sorted by starred, so getting most popular
       total = Math.min(totalProjects, data.items.length);
@@ -57,31 +62,31 @@ export function fetchTweets(searchTerm, language, totalProjects) {
               'Content-Type': 'text/json',
               'Authorization': 'Bearer ' + process.env.REACT_APP_BEARER_TOKEN
             }), 
-            origin: 'http://8080',
-            method: 'GET',
-            mode: 'cors' 
+            method: 'GET'
         });
         return request;
       });
 
       Promise.all(fetches.map((request) => {
         return fetch(request).then((response) => {
-          if (response.status !== 200) {
-            console.log('failed to fetch tweets.');
-            return;
-          }
           return response.json();
-        }).then((data) => {
-          return data;
-        });
-      })).then((tweets) => {
+          }).then((data) => {
+            return data;
+          }).catch(function(err) {
+            dispatch(fetchTweetsError(err));
+          });
+        }))
+        .then((tweets) => {
           // Even starred or popular projects might not have recent tweets
           tweets = tweets.filter(tweets => tweets.statuses.length > 0);
           dispatch(fetchTweetsSuccess(tweets));
           return tweets;
+        })
+        .catch(function(error) {
+          dispatch(fetchTweetsError(error));
         });
     })
-    .catch(function(error) {
+    .catch(error => {
       dispatch(fetchTweetsError(error));
       console.log('failed to get github projects', error)
     });
