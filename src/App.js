@@ -11,12 +11,14 @@ class App extends Component {
     super(props);
 
     this.onFormSubmit = this.onFormSubmit.bind(this);
-    this.tweets = [];
+    // this.tweets = [];
   }
 
   onFormSubmit = (event) => {
     event.preventDefault();  //prevent form submit, could use a regular button but this way we get Enter key for free
-    this.props.dispatch(fetchTweets(event.target[0].value, event.target[1].value, this.props.totalProjects));
+    const searchTerm = event.target[0].value.toLowerCase();
+    const language = event.target[1].value;
+    this.props.dispatch(fetchTweets(searchTerm, language, this.props.totalProjects));
   }
   
   render() {
@@ -30,7 +32,7 @@ class App extends Component {
     } else if (tweets.length === 0) {
       results.push(<div key="no-records">No Results Found</div>);
     } else {
-      results.push(<Table tweets={ tweets } />);
+      results.push(<Table key="results" tweets={ tweets } />);
     }
 
     return (
@@ -41,7 +43,7 @@ class App extends Component {
         </header>
         <Container className="Content">
           <Form onSubmit={this.onFormSubmit}>
-          <Row form>
+          <Row>
             <Col md={6}>
               <FormGroup>
                 <Label>Search Terms:</Label>
@@ -84,7 +86,7 @@ const mapStateToProps = state => ({
 });
 
 App.defaultProps = {
-  totalProjects: 10,
+  totalProjects: 5,
 }
 
 App.propTypes = {

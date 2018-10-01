@@ -9,14 +9,15 @@ export class RepoTitle extends React.Component {
   }
 }
 
-export class RepoTweets extends React.Component {
+export class RepoStatuses extends React.Component {
   render() {
-    const { tweets } = this.props;
+    const { statuses } = this.props;
     const rows = [];
-    tweets.forEach( (status, key) => {
+    statuses.forEach( (status, key) => {
       rows.push(
-        <li className="tweet-card">
-          <div className="tweet-card__title"><span class="tweet-card__user">{ status.user.name }</span>&nbsp;<span>@{ status.user.screen_name }</span></div>
+        <li key= { key } className="tweet-card">
+          <div className="tweet-card__title"><span className="tweet-card__user">{ status.user.name }</span>&nbsp;<span>@{ status.user.screen_name }</span></div>
+          <div className="tweet-card__time">{ status.created_at }</div>
           <div className="tweet-card__text">{ status.text }</div>
         </li>
       )
@@ -35,20 +36,12 @@ export class Table extends React.Component {
     const rows = [];
 
     tweets.forEach((repo, key) => {
-      if (repo.statuses.length === 0) {
-        return;
-      }
-
       const title = 'GiHub Repository: ' + decodeURIComponent(repo.search_metadata.query);
       rows.push(
-        <RepoTitle
-          title={ title }
-          key={ title + key}/>
+        <RepoTitle title={ title } key={ title + key}/>
       );
       rows.push(
-        <RepoTweets
-          tweets= { repo.statuses }
-          key= { key } />
+        <RepoStatuses statuses= { repo.statuses } key= { key } />
       );
     });
 
