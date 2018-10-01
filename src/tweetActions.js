@@ -81,11 +81,3 @@ export function fetchTweets(searchTerm, language, totalProjects) {
     });
   };
 }
-
-// TODO: Handle HTTP errors since fetch won't.
-// function handleErrors(response) {
-//   if (!response.ok) {
-//     throw Error(response.statusText);
-//   }
-//   return response;
-// }

@@ -51,7 +51,7 @@ class App extends Component {
           <Row>
             <Col md={6}>
               <FormGroup>
-                <Label>Search Terms:</Label>
+                <Label>Search Term:</Label>
                 <Input
                   className = "form-control"
                   type="text"
