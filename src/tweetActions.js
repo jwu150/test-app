@@ -57,7 +57,9 @@ export function fetchTweets(searchTerm, language, totalProjects) {
               'Content-Type': 'text/json',
               'Authorization': 'Bearer ' + process.env.REACT_APP_BEARER_TOKEN
             }), 
-            method: 'GET'
+            origin: 'http://8080',
+            method: 'GET',
+            mode: 'cors' 
         });
         return request;
       });
