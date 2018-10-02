@@ -68,11 +68,16 @@ export function fetchTweets(searchTerm, language, totalProjects) {
       });
 
       Promise.all(fetches.map((request) => {
-        return fetch(request).then((response) => {
+        return fetch(request).then(response => {
+          if (!response.ok) {
+            throw Error(response.statusText);
+          }
+          return response;
+          }).then(response => {
           return response.json();
-          }).then((data) => {
+          }).then(data => {
             return data;
-          }).catch(function(err) {
+          }).catch(err => {
             dispatch(fetchTweetsError(err));
           });
         }))
