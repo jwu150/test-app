@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import cors_proxy from 'cors-anywhere';
 import { connect } from 'react-redux';
 import { fetchTweets } from './tweetActions';
 import { Button, Container, Col, Form, FormGroup, Input, Label, Row } from 'reactstrap';
@@ -12,19 +11,6 @@ class App extends Component {
     super(props);
 
     this.onFormSubmit = this.onFormSubmit.bind(this);
-    // // Listen on a specific host via the HOST environment variable
-    // var host = process.env.HOST || '0.0.0.0';
-    // // Listen on a specific port via the PORT environment variable
-    // var port = process.env.PORT || 8081;
-    
-    // var cors_proxy = require('cors-anywhere');
-    // cors_proxy.createServer({
-    //     originWhitelist: [], // Allow all origins
-    //     requireHeader: ['origin', 'x-requested-with'],
-    //     removeHeaders: ['cookie', 'cookie2']
-    // }).listen(port, host, function() {
-    //     console.log('Running CORS Anywhere on ' + host + ':' + port);
-    // });  
   }
   
   /**
@@ -57,32 +43,20 @@ class App extends Component {
       <div className="App">
         <header className="App-header">
           {/* <img src={logo} className="App-logo" alt="logo" /> */}
-          <h1 className="App-title">GitHub Tweets</h1>
+          <h1 className="App-title">Twitter Search</h1>
         </header>
         <Container className="Content">
           <Form onSubmit={this.onFormSubmit}>
           <Row>
-            <Col md={6}>
+            <Col xs={6}>
               <FormGroup>
-                <Label>Search Term:</Label>
+                <Label>Enter Keyword:</Label>
                 <Input
                   className = "form-control"
                   type="text"
                   name="text"
                   placeholder="enter text"
                 />
-                </FormGroup>
-              </Col>
-              <Col md={6}>
-                <FormGroup>
-                  <Label>Language:</Label>
-                  <Input className = "form-control" type="select" name="select" id="languageSelect">
-                    <option value="assembler">Assembler</option>
-                    <option value="c">C</option>
-                    <option value="c++">C++</option>
-                    <option value="java">Java</option>
-                    <option value="javascript">JavaScript</option>
-                  </Input>
                 </FormGroup>
               </Col>
             </Row>
@@ -110,7 +84,7 @@ App.defaultProps = {
 /**
  * proptypes that are unique to toggle buttons
  *
- * @property {number} [totalProjects] - number of repository projects to fetch  using twitter API
+ * @property {number} [totalProjects] - not used
  */
 App.propTypes = {
   totalProjects: PropTypes.number
