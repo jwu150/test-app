@@ -47,7 +47,6 @@
   cursor: pointer;
 }
 
-/* syntax and rules can be simplified in SASS/LESS */
 .tweet-card__title, .tweet-card__time {
   font-size: 12px;
 }

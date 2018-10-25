@@ -4,7 +4,6 @@ import thunk from 'redux-thunk';
 import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import tweetReducer from './tweetReducer'
-import App from './App';
 import IAApp from './App_root';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
